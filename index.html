@@ -37,6 +37,8 @@
         border: 1px solid black;
         display: none;
         margin: 0 auto;
+        max-width: 100%;
+        height: auto;
       }
 
       p.tip {
@@ -54,14 +56,16 @@
     <form>
         <label for="image">Select an image:</label>
         <select id="image">
-          <option value="https://huynhviettham.github.io/selab/image/Logo01.png">Image 1</option>
+          <option value="image1.png">Image 1</option>
+          <option value="image2.png">Image 2</option>
+          <option value="image3.png">Image 3</option>
         </select>
         <label for="text">Text:</label>
-        <input id="text" type="text" value="Vietnam" required>
+        <input id="text" type="text" value="Firefox" required>
         <label for="color">Color:</label>
-        <div class="color"><input id="color" type="color" value="#ffffff" required></div>
+        <div class="color"><input id="color" type="color" value="#000000" required></div>
         <label for="font">Font:</label>
-        <input id="font" type="text" value="14px 'Rastanty Cortez', sans-serif" required>
+        <input id="font" type="text" value="32px 'Rastanty Cortez', sans-serif" required>
         <label for="x-position">Position X-axis (*):</label>
         <input id="x-position" type="number" min="0" required>
         <label for="y-position">Position Y-axis (*):</label>
@@ -86,13 +90,7 @@
         img.src = inputImage.value;
       };
       img.onload = () => {
-        canvas.width = img.width;
-        canvas.height = img.height;
-        canvas.style.display = "block";
-        inputXPosition.max = canvas.width - 1;
-        inputYPosition.max = canvas.height - 1;
-        inputYPosition.value = Math.floor(canvas.height / 2);
-        inputXPosition.value = centerXPosition();
+        resizeCanvas();
         draw();
       };
       inputText.oninput = draw;
@@ -108,6 +106,22 @@
         draw();
       };
 
+      window.onresize = () => {
+        resizeCanvas();
+        draw();
+      };
+
+      function resizeCanvas() {
+        const aspectRatio = img.width / img.height;
+        canvas.width = window.innerWidth * 0.8;
+        canvas.height = canvas.width / aspectRatio;
+        canvas.style.display = "block";
+        inputXPosition.max = canvas.width - 1;
+        inputYPosition.max = canvas.height - 1;
+        inputYPosition.value = Math.floor(canvas.height / 2);
+        inputXPosition.value = centerXPosition();
+      }
+
       function centerXPosition() {
         ctx.font = inputFont.value;
         const textMetrics = ctx.measureText(inputText.value);
@@ -116,7 +130,7 @@
 
       function draw() {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
-        ctx.drawImage(img, 0, 0);
+        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
         ctx.fillStyle = inputColor.value;
         ctx.font = inputFont.value;
         ctx.fillText(inputText.value, inputXPosition.value, inputYPosition.value);
